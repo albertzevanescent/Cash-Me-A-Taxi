@@ -1,0 +1,970 @@
+\documentclass[12pt]{article}
+
+
+\usepackage{graphicx}
+\usepackage{paralist}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{hhline}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{url}
+\usepackage{color}
+
+\newcommand{\Implies}{\Rightarrow}
+\newcommand{\bi}{\begin{itemize}}
+\newcommand{\ei}{\end{itemize}}
+\newcommand{\be}{\begin{enumerate}}
+\newcommand{\ee}{\end{enumerate}}
+\newcommand{\code}[1]{\texttt{#1}}
+
+\oddsidemargin -10mm
+\evensidemargin -10mm
+\textwidth 160mm
+\textheight 200mm
+\renewcommand\baselinestretch{1.0}
+
+\pagestyle {plain}
+\pagenumbering{arabic}
+
+\newcounter{stepnum}
+
+\title{Cash Me A Taxi}
+\author{Albert Zhou}
+
+\begin {document}
+
+\maketitle
+
+This project is meant to be a reiteration of the original Cash Me A Taxi project for SFWR ENG 2XB3 done in a similar style of SFWR ENG 2AA4 documentation. Additionally, a revamp of the implementation is made to better fit my skill set.
+
+The original project can be found in the OldCashMeATaxi folder.
+
+The members of the original CashMeATaxi project are Albert Zhou, Areeba Aziz, David Bednar, Dylan Smith, and Himanshu Aggarwal.
+
+
+\newpage
+
+\tableofcontents
+
+\newpage
+
+\section{Intro}
+
+This project intends to provide a solution for the problem of taxi drivers in New York Citystruggling financially as modern ride-sharing apps like Uber currently dominate the market. The solution is to calculate the most optimal routes between NYC zones that earn drivers the most profit, based on 10 years’ worth of taxi trips datasets provided by the City of New York. The datasets contain taxi trip data such as the distance travelled per trip, the amount of fare made, the tips earned, and the start/end location and times. \\ \\
+Our program first parses the intensive data that contains the taxi trip records and builds a directed graph with nodes representing a NYC taxi zone. The user then can select from various functions to run on the graph, such as search for the most optimal path between two given zones, or sort the edges (routes) by the given field (fare, tip, distance, etc). This project implements graph traversal, sorting and searching algorithms that were taught throughout the year.
+
+\newpage
+
+\section* {Equality Interface Module}
+
+\subsection*{Generic Interface Module}
+
+Equality(T)
+
+\subsection* {Uses}
+
+None
+
+\subsection* {Syntax}
+
+\subsubsection* {Exported Types}
+
+None
+
+\subsubsection* {Exported Constants}
+
+None
+
+\subsubsection* {Exported Access Programs}
+
+\begin{tabular}{| l | l | l | p{5cm} |}
+	\hline
+	\textbf{Routine name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions}\\
+	\hline
+	equals & T & $\mathbb{B}$ & ~\\
+	\hline
+\end{tabular}
+
+\subsubsection* {Considerations}
+
+When implementing in Java, Object acts as Equality.
+
+
+\newpage
+
+\section* {Generic Seq Module}
+
+\subsection* {Generic Template Module inherits Equality(Seq(T))}
+
+Seq(T with Equality(T))
+
+\subsection* {Uses}
+
+Equality
+
+\subsection* {Syntax}
+
+\subsubsection* {Exported Types}
+
+Seq(T) = ?
+
+\subsubsection* {Exported Constants}
+
+None
+
+\subsubsection* {Exported Access Programs}
+
+\begin{tabular}{| l | l | l | p{5cm} |}
+	\hline
+	\textbf{Routine name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions}\\
+	\hline
+	new Seq(T) & ~ & Seq(T) & ~\\
+	\hline
+	new Seq(T) & Sequence of T & Seq(T) & ~\\
+	\hline
+	append & T & ~ & ~\\
+	\hline
+	rm & $\mathbb{N}$ & ~ & IllegalArgumentException\\
+	%\hline
+	%rm & T & ~ & IllegalArgumentException\\
+	\hline
+	member & T & $\mathbb{B}$ & ~\\
+	\hline
+	size & ~ & $\mathbb{N}$ & ~\\
+	\hline
+	get & $\mathbb{N}$ & T & IllegalArgumentException\\
+	\hline
+	find & T & $\mathbb{N}$ & IllegalArgumentException\\
+	\hline
+	count & T & $\mathbb{N}$ & ~\\
+	\hline
+\end{tabular}
+
+\subsection* {Semantics}
+
+\subsubsection* {State Variables}
+
+$S$: seq of T
+
+\subsubsection* {State Invariant}
+
+None
+
+\subsubsection* {Access Routine Semantics}
+
+new Seq():
+\begin{itemize}
+	\item transition: $S := \{\}$
+	\item output: $out := \mbox{self}$
+	\item exception: None
+\end{itemize}
+
+new Seq(s):
+\begin{itemize}
+	\item transition: $S := s$
+	\item output: $out := \mbox{self}$
+	\item exception: None
+\end{itemize}
+
+\noindent append($e$):
+\begin{itemize}
+	\item transition: $S := S || [ e ]$
+	\item exception: None
+\end{itemize}
+
+\noindent rm($x$):
+\begin{itemize}
+	\item transition: $S := [i : \mathbb{N} | 0 \le i \le \mbox{size}() \land i \neq x : \textit{S}[i] ]$
+	\item exception: $exc := 0 \le x < \mbox{size}() \Rightarrow \text{IllegalArgumentException}$
+\end{itemize}
+
+%\noindent rm($e$):
+%\begin{itemize}
+%	\item transition: $S := [i : \mathbb{N} | 0 \le i \le \mbox{size}() %\land  i \neq \mbox{find}(e) : \textit{S}[i] ]$
+%	\item exception: $exc := e \notin S \Rightarrow \text{IllegalArgumentException}$
+%\end{itemize}
+
+\noindent member($x$):
+\begin{itemize}
+	\item output: $out := x \in S$
+	\item exception: None
+\end{itemize}
+
+\noindent size():
+\begin{itemize}
+	\item output: $out := |S|$
+	\item exception: None
+\end{itemize}
+
+\noindent get($x$):
+\begin{itemize}
+	\item output: $out := \textit{S}[x]$
+	\item exception: $exc := 0 \le x < \mbox{size}() \Rightarrow \text{IllegalArgumentException}$
+\end{itemize}
+
+\noindent find($e$):
+\begin{itemize}
+	\item transition: $S := i : \mathbb{N} | 0 \le i < \mbox{size}() \land e.\mbox{equals}(\textit{S}[i]) : \textit{S}[i]$
+	\item exception: $exc := e \notin S \Rightarrow \text{IllegalArgumentException}$
+\end{itemize}
+
+\noindent count($e$):
+\begin{itemize}
+	\item output: $out := +(i : \mathbb{N} | 0 \le i < \mbox{size}() \land e.\mbox{equals}(\textit{S}[i]) : 1)$
+	\item exception: None
+\end{itemize}
+
+\noindent equals($R$):
+\begin{itemize}
+	\item output: $out := R.\mbox{size}() = \mbox{size}() \land \forall (i: N | 0 \le i < \mbox{size}() : R.\mbox{get}[i].\mbox{equals}(\textit{S}[i]))$
+	\item exception: None
+\end{itemize}
+
+\newpage
+
+\section{Node Module}
+
+\subsection*{Template Module inherits Equality(Node)}
+
+Node
+
+\subsection*{Uses}
+
+Equality
+
+\subsection*{Syntax}
+
+\subsubsection*{Exported Types}
+
+Node = ?
+
+\subsubsection* {Exported Constants}
+
+None
+
+\subsubsection*{Exported Access Programs}
+
+\begin{tabular}{| l | l | l | l |}
+	\hline
+	\textbf{Routine name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions}\\
+	\hline
+	new Node & $\mathbb{N}$ & Node & ~\\
+	\hline
+	getID & ~ & $\mathbb{N}$ & ~\\
+	\hline
+\end{tabular}
+
+\subsection*{Semantics}
+
+\subsubsection*{State Variables}
+
+\textit{id}: $\mathbb{Z}$
+
+\subsubsection*{State Invariant}
+
+None
+
+\subsubsection* {Assumptions}
+
+\begin{itemize}
+	\item All zone IDs are valid in the dataset.
+\end{itemize}
+
+\subsubsection*{Access Routine Semantics}
+
+\noindent new Node($x$):
+\begin{itemize}
+	\item transition: $\textit{id} := x$
+	\item output: $out := \mbox{self}$
+	\item exception: None
+\end{itemize}
+
+\noindent getID():
+\begin{itemize}
+	\item output: $out := \textit{id}$
+	\item exception: None
+\end{itemize}
+
+\noindent equals($n$):
+\begin{itemize}
+	\item output: $out := \textit{id} = n.\mbox{getID}()$
+	\item exception: None
+\end{itemize}
+
+\newpage
+
+\section{Edge Module}
+
+\subsection*{Template Module inherits Equality(Edge)}
+
+Edge
+
+\subsection*{Uses}
+
+Equality, Node
+
+\subsection*{Syntax}
+
+\subsubsection*{Exported Types}
+
+Edge = ?
+
+\subsubsection* {Exported Constants}
+
+None
+
+\subsubsection*{Exported Access Programs}
+
+\begin{tabular}{| l | l | l | l |}
+	\hline
+	\textbf{Routine name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions}\\
+	\hline
+	new Edge & Node, Node, sequence of $\mathbb{N}, \mathbb{R}, \mathbb{R}, \mathbb{R}, \mathbb{R}$ & Edge & IllegalArgumentException\\
+	\hline
+	start & ~ & Node & ~\\
+	\hline
+	end & ~ & Node & ~\\
+	\hline
+	data & ~ & sequence of $\mathbb{N}, \mathbb{R}, \mathbb{R}, \mathbb{R}, \mathbb{R}$ & ~\\
+	\hline
+	update & sequence of $\mathbb{N}, \mathbb{R}, \mathbb{R}, \mathbb{R}, \mathbb{R}$ & ~ & IllegalArgumentException\\
+	\hline
+	weight & ~ & $\mathbb{R}$ & ~\\
+	\hline
+	comp & Edge, $\mathbb{i}$ & $\mathbb{Z}$ & IllegalArgumentException\\
+	\hline
+\end{tabular}
+
+\subsection*{Semantics}
+
+\subsubsection*{State Variables}
+
+\textit{s}: Node \\
+\textit{e}: Node \\
+\textit{trps}: $\mathbb{N}$ \\
+\textit{fr}: $\mathbb{N}$ \\
+\textit{tp}: $\mathbb{N}$ \\
+\textit{dst}: $\mathbb{N}$ \\
+\textit{tll}: $\mathbb{N}$
+
+\subsubsection*{State Invariant}
+
+None
+
+\subsubsection*{Access Routine Semantics}
+
+\noindent new Edge($start, end, data$):
+\begin{itemize}
+	\item transition: $\textit{s, e, trps, fr, tp, dst, fll} := start, end, data[0], data[1], data[2], data[3], data[4]$
+	\item output: $out := \mbox{self}$
+	\item exception: $exc := |data| \neq 5 \Rightarrow \text{IllegalArgumentException}$
+\end{itemize}
+
+\noindent start():
+\begin{itemize}
+	\item output: $out := \textit{s}$
+	\item exception: None
+\end{itemize}
+
+\noindent end():
+\begin{itemize}
+	\item output: $out := \textit{e}$
+	\item exception: None
+\end{itemize}
+
+\noindent data():
+\begin{itemize}
+	\item output: $out := [\textit{trps, fr, tp, dst, tll} ]$
+	\item exception: None
+\end{itemize}
+
+\noindent update($data$):
+\begin{itemize}
+	\item transition: $\textit{trps, fr, tp, dst, fll} := trps + data[0], fr + data[1], tp + data[2], dst + data[3], tll + data[4]$
+	\item output: $out := \mbox{self}$
+	\item exception: $exc := |data| \neq 5 \Rightarrow \text{IllegalArgumentException}$
+\end{itemize}
+
+\noindent weight():
+\begin{itemize}
+	\item output: $out := dst / (fr + tp)$
+	\item exception: None
+\end{itemize}
+
+\noindent comp($e, i$):
+\begin{itemize}
+	\item output: $out := \mbox{data}[i] > e.\mbox{data}[i] \Rightarrow 1 | \mbox{data}[i] < e.\mbox{data}[i] \Rightarrow -1 | true \Rightarrow 0$
+	\item exception: $exc := i < 0 \lor i > 5 \Rightarrow \text{IllegalArgumentException}$
+\end{itemize}
+
+\noindent equals($e$):
+\begin{itemize}
+	\item output: $out := \textit{s}.\mbox{equals}(e.\mbox{start}()) \land \textit{e}.\mbox{equals}(e.\mbox{end}())$
+	\item exception: None
+\end{itemize}
+
+\newpage
+
+\section{Graph Module}
+
+\subsection*{Template Module}
+
+Graph
+
+\subsection*{Uses}
+
+Seq, Node, Edge
+
+\subsection*{Syntax}
+
+\subsubsection*{Exported Types}
+
+Graph = ?
+
+\subsubsection* {Exported Constants}
+
+None
+
+\subsubsection*{Exported Access Programs}
+
+\begin{tabular}{| l | l | l | l |}
+	\hline
+	\textbf{Routine name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions}\\
+	\hline
+	new Graph & ~ & Graph & ~\\
+	\hline
+	nodeList & ~ & Seq(Node) & ~\\
+	\hline
+	edgeList & ~ & Seq(Seq(Edge)) & ~\\
+	\hline
+	addNode & Node & ~ & ~\\
+	\hline
+	addEdge & Edge & ~ & IllegalArgumentException\\
+	\hline
+	adj & Node & Seq(Edge) & ~\\
+	\hline
+	find & Node & $\mathbb{N}$ & ~\\
+	\hline
+	n & ~ & $\mathbb{N}$ & ~\\
+	\hline
+	m & ~ & $\mathbb{N}$ & ~\\
+	\hline
+\end{tabular}
+
+\subsection*{Semantics}
+
+\subsubsection*{State Variables}
+
+\textit{nodes}: Seq(Node) \\
+\textit{edges}: Seq(Seq(Edge)) 
+
+\subsubsection*{State Invariant}
+
+None
+
+\subsubsection*{Access Routine Semantics}
+
+\noindent new Graph():
+\begin{itemize}
+	\item transition: $\textit{n, m, nodes, edges} := 0, 0, \mbox{new Seq}(\mbox{Node}), \mbox{new Seq}(\mbox{Seq}(\mbox{Edge}))$
+	\item output: $out := \mbox{self}$
+	\item exception: None
+\end{itemize}
+
+\noindent nodeList():
+\begin{itemize}
+	\item output: $out := \textit{nodes}$
+	\item exception: None
+\end{itemize}
+
+\noindent edgeList():
+\begin{itemize}
+	\item output: $out := \textit{edges}$
+	\item exception: None
+\end{itemize}
+
+\noindent addNode($n$):
+\begin{itemize}
+	\item transition: $\textit{nodes, edges} := \textit{nodes}.\mbox{member}(n) = false \Rightarrow \textit{nodes}.\mbox{append}(n), \\ \textit{edges}.\mbox{append}(\mbox{new Seq}(\mbox{Seq}(\mbox{Edge}))) | true \Rightarrow \textit{nodes, edges}$
+	\item exception: None
+\end{itemize}
+
+\noindent addEdge($e$):
+\begin{itemize}
+	\item transition: $\textit{edges} := \textit{edges}.get(\mbox{find}(e.\mbox{start}())).\mbox{member}(e) = false \Rightarrow \\
+	\indent \textit{edges}(\mbox{find}(e.\mbox{start}())).\mbox{append}(e) |\\
+	true \Rightarrow \textit{edges}(\mbox{find}(e.\mbox{start}())).\mbox{get}(\textit{edges}(\mbox{find}(e.\mbox{start}())).\mbox{find}(e)).\mbox{update}(e.\mbox{data}())
+	$
+	\item exception: $exc := \textit{nodes}.\mbox{member}(e.\mbox{start}()) = false \lor \textit{nodes}.\mbox{member}(e.\mbox{end}()) = false \Rightarrow \text{IllegalArgumentException}$
+\end{itemize}
+
+\noindent adj($n$):
+\begin{itemize}
+	\item output: $out := \mbox{findNode}(n) \neq -1 \Rightarrow \textit{edges}[\mbox{findNode}(n)] | true \Rightarrow \mbox{new Seq}(\mbox{Seq}(\mbox{Edge}))$
+	\item exception: None
+\end{itemize}
+
+\noindent n():
+\begin{itemize}
+	\item output: $out := \textit{nodes}.\mbox{size}()$
+	\item exception: None
+\end{itemize}
+
+\noindent m():
+\begin{itemize}
+	\item output: $out := +(i : \mathbb{N} | 0 \le i < \mbox{n}() : \textit{edges}[i].\mbox{size}())$
+	\item exception: None
+\end{itemize}
+
+\newpage
+
+\section{GraphSearch Module}
+
+\subsection*{Template Module}
+
+GraphSearch
+
+\subsection*{Uses}
+
+Seq, Node, Edge, Graph
+
+\subsection*{Syntax}
+
+\subsubsection*{Exported Types}
+
+GraphSearch = ?
+
+\subsubsection*{Exported Constants}
+
+None
+
+\subsubsection*{Exported Access Programs}
+
+\begin{tabular}{| l | l | l | l |}
+	\hline
+	\textbf{Routine name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions}\\
+	\hline
+	new GraphSearch & Graph & GraphSearch & ~\\
+	\hline
+	find & Node & Seq(Edge) & ~\\
+	\hline
+\end{tabular}
+
+\subsection*{Semantics}
+
+\subsubsection*{State Variables}
+
+\textit{g}: Graph
+
+\subsubsection*{State Invariant}
+
+None
+
+\subsubsection*{Access Routine Semantics}
+
+\noindent new GraphSearch($G$):
+\begin{itemize}
+	\item transition: $\textit{g} := G$
+	\item output: $out := \mbox{self}$
+	\item exception: None
+\end{itemize}
+
+\noindent find($n$):
+\begin{itemize}
+	\item output: $out := \textit{g}.\mbox{adj}(n)$
+	\item exception: None
+\end{itemize}
+
+\newpage
+
+\section{GraphSort Module}
+
+\subsection*{Template Module}
+
+GraphSort
+
+\subsection*{Uses}
+
+Seq, Node, Edge, Graph
+
+\subsection*{Syntax}
+
+\subsubsection*{Exported Types}
+
+GraphSort = ?
+
+\subsubsection*{Exported Constants}
+
+None
+
+\subsubsection*{Exported Access Programs}
+
+\begin{tabular}{| l | l | l | l |}
+	\hline
+	\textbf{Routine name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions}\\
+	\hline
+	new GraphSort & Graph & GraphSort & ~\\
+	\hline
+	sort & $\mathbb{N}, \mathbb{Z}$ & Seq(Edge) & IllegalArgumentException\\
+	\hline
+\end{tabular}
+
+\subsection*{Semantics}
+
+\subsubsection*{State Variables}
+
+\textit{g}: Graph
+
+\subsubsection*{State Invariant}
+
+None
+
+\subsubsection*{Access Routine Semantics}
+
+\noindent new GraphSort($G$):
+\begin{itemize}
+	\item transition: $\textit{g} := G$
+	\item output: $out := \mbox{self}$
+	\item exception: None
+\end{itemize}
+
+\noindent sort($i, j$):
+\begin{itemize}
+	\item output: $out := A \text{, such that:} \\
+	\forall (e : \mbox{Edge} | e \in E : E.\mbox{count}(e) = A.\mbox{count}(e) ) \land \forall (k : \mathbb{N} | 0 \le k < A.\mbox{size}() - 1 : A.\mbox{get}(k).\mbox{data}[i] * j \le A.\mbox{get}(k+1).\mbox{data}[i])$
+	\item exception: $exc := \lnot ((0 \le i < 5) \land (j = 1 \lor j = -1)) \Rightarrow \text{IllegalArgumentException}$
+\end{itemize}
+
+\subsection*{Local Functions}
+
+\noindent arrange: $\mbox{Seq(Seq(Edge))} \rightarrow \mbox{Seq(Edge)}$\\
+\noindent 
+$\mbox{sortEdges}(E) = \mbox{Seq}([i : \mathbb{N} | 0 \le i < E.\mbox{size}() : j : \mathbb{N} | 0 \le j < E[i].\mbox{size}() : E[i][j]])$\\
+
+\newpage
+
+\section{GraphPath Module}
+
+\subsection*{Template Module}
+
+GraphPath
+
+\subsection*{Uses}
+
+Seq, Node, Edge, Graph
+
+\subsection*{Syntax}
+
+\subsubsection*{Exported Types}
+
+GraphPath = ?
+
+\subsubsection*{Exported Constants}
+
+None
+
+\subsubsection*{Exported Access Programs}
+
+\begin{tabular}{| l | l | l | l |}
+	\hline
+	\textbf{Routine name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions}\\
+	\hline
+	new GraphPath & Graph & GraphPath & ~\\
+	\hline
+	path & Node, Node & Seq(Edge) & IllegalArgumentException\\
+	\hline
+\end{tabular}
+
+\subsection*{Semantics}
+
+\subsubsection*{State Variables}
+
+\textit{g}: Graph
+
+\subsubsection*{State Invariant}
+
+None
+
+\subsubsection*{Access Routine Semantics}
+
+\noindent new GraphPath($G$):
+\begin{itemize}
+	\item transition: $\textit{g} := G	$
+	\item output: $out := \mbox{self}$
+	\item exception: None
+\end{itemize}
+
+\noindent path($a,b$):
+\begin{itemize}
+	\item output: $out := p \text{, such that:} \\
+	\forall (q : \mbox{Seq(Edge)} | \mbox{validPath}(a,b, q) : \mbox{cost}(p) \le \mbox{cost}(q)$
+	\item exception: $exc := \textit{g}.\mbox{find}(a) = -1 \lor \textit{g}.\mbox{find}(b) = -1
+	 \Rightarrow \text{IllegalArgumentException}$
+\end{itemize}
+
+\subsection*{Local Functions}
+
+\noindent validPath: $\mbox{Node} \times \mbox{Node} \times \mbox{Seq(Edge)} \rightarrow \mathbb{B}$\\
+\noindent 
+$\mbox{validPath}(a,b, q) \equiv
+q.\mbox{get}(0).\mbox{start}() = a \land q.\mbox{get}(q.\mbox{size}()-1).\mbox{end}() = b \land \\
+\forall (i : \mathbb{N} | 0 \le i < q.\mbox{size}()-1 : q.\mbox{get}(i).\mbox{end}().\mbox{equals}(q.\mbox{get}(i+1).\mbox{start}()))$\\
+
+\noindent cost: $\mbox{Seq(Edge)} \rightarrow \mathbb{R}$\\
+\noindent 
+$\mbox{cost}(p) =
++ (i : \mathbb{N} | 0 \le i < p.\mbox{size}() : p.\mbox{get}(i).\mbox{cost}())$\\
+
+\newpage
+
+\section{Parser Module}
+
+\subsection*{Module}
+
+Parser
+
+\subsection*{Uses}
+
+Node, Edge, Graph
+
+\subsection*{Syntax}
+
+\subsubsection*{Exported Types}
+
+Parser = ?
+
+\subsubsection*{Exported Constants}
+
+None
+
+\subsubsection*{Exported Access Programs}
+
+\begin{tabular}{| l | l | l | l |}
+	\hline
+	\textbf{Routine name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions}\\
+	\hline
+	new Parser & ~ & Parser & ~\\
+	\hline
+	parse & String & Graph & IllegalArgumentException\\
+	\hline
+\end{tabular}
+
+\subsection*{Semantics}
+
+\subsubsection*{State Variables}
+
+None
+
+\subsubsection*{State Invariant}
+
+The parser is used only on .csv files that have the same format as the one provided in this project.
+
+\subsubsection* {Assumptions}
+
+\subsubsection*{Access Routine Semantics}
+
+\noindent new Parser():
+\begin{itemize}
+	\item transition: None
+	\item output: $out := \mbox{self}$
+	\item exception: None
+\end{itemize}
+
+\noindent parse($f$):
+\begin{itemize}
+	\item output: $out := \text{Create a graph } g \text{ such that:} \\
+	\text{the data from the lines in } \textit{f} \text{ are added to } g$
+	\item exception: $exc := f\text{ does not exist} \Rightarrow  \mbox{IllegalArgumentException}$
+\end{itemize}
+
+\newpage
+
+\section{FileController Module}
+
+\subsection*{Module}
+
+FileController
+
+\subsection*{Uses}
+
+Node, Edge, Graph
+
+\subsection*{Syntax}
+
+\subsubsection*{Exported Types}
+
+FileController = ?
+
+\subsubsection*{Exported Constants}
+
+None
+
+\subsubsection*{Exported Access Programs}
+
+\begin{tabular}{| l | l | l | l |}
+	\hline
+	\textbf{Routine name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions}\\
+	\hline
+	read & String & Graph & IllegalArgumentException\\
+	\hline
+	save & Graph, String & ~ & ~\\
+	\hline
+\end{tabular}
+
+\subsection*{Semantics}
+
+\subsubsection*{State Variables}
+
+None
+
+\subsubsection*{State Invariant}
+
+None
+
+\subsubsection* {Assumptions}
+
+The file control is used only to read files that have been created by the save function.
+
+\subsubsection*{Access Routine Semantics}
+
+\noindent read($f$):
+\begin{itemize}
+	\item output: $out := \text{Create a graph } g \text{ such that:} \\
+	\text{the data from the lines in } \textit{f} \text{ are added to } g$
+	\item exception: $exc := f\text{ does not exist} \Rightarrow  \mbox{IllegalArgumentException}$
+\end{itemize}
+
+\noindent save($g, f$):
+\begin{itemize}
+	\item transition: Create a file called $f$ such that: \\
+	the first line contains n, the number of nodes, and m the number of edges in $g$. The next n lines contain the id of the n nodes and the next m lines contain the starting node id, ending node id, number of trips, fare, tip, distance, and toll of the m edges.
+	\item exception: $exc := f\text{ does not exist} \Rightarrow  \mbox{IllegalArgumentException}$
+\end{itemize}
+
+\newpage
+
+\section{Cash Me A Taxi Module}
+
+\subsection*{Module}
+
+CashMeATaxi
+
+\subsection*{Uses}
+
+Node, Edge, Graph, GraphSort, GraphSearch, Parse, FileController
+
+\subsection*{Syntax}
+
+\subsubsection*{Exported Types}
+
+CashMeATaxi = ?
+
+\subsubsection*{Exported Constants}
+
+None
+
+\subsubsection*{Exported Access Programs}
+
+\begin{tabular}{| l | l | l | l |}
+	\hline
+	\textbf{Routine name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions}\\
+	\hline
+	init & ~ & ~ & ~\\
+	\hline
+	read & String & Graph & ~\\
+	\hline
+	save & String & ~ & ~\\
+	\hline
+	load & String & ~ & ~\\
+	\hline
+	search & Node & Seq(Edge) & ~\\
+	\hline
+	sort & $\mathbb{N}, \mathbb{Z}$ & Seq(Edge) & ~\\
+	\hline
+	path & Node, Node & Seq(Edge) & ~\\
+	\hline
+	printout & Seq(Edge), String & ~ & ~\\
+	\hline
+	main & ~ & ~ & ~\\
+	\hline
+\end{tabular}
+
+\subsection*{Semantics}
+
+\subsubsection*{State Variables}
+
+\textit{parser}: Parser\\
+\textit{control}: FileController\\
+\textit{g}: Graph
+
+\subsubsection*{State Invariant}
+
+None
+
+\subsubsection*{Access Routine Semantics}
+
+\noindent init:
+\begin{itemize}
+	\item transition: $\textit{parser, control, g} := \mbox{new Parser}(), \mbox{new FileController}(), \mbox{new Graph}()$
+	\item exception: None
+\end{itemize}
+
+\noindent read($f$):
+\begin{itemize}
+	\item transition: $\textit{g} := \textit{parser}.\mbox{parse}(f)$
+	\item exception: none
+\end{itemize}
+
+\noindent save($f$):
+\begin{itemize}
+	\item output: $out := \textit{control}.\mbox{save}(f)$
+	\item exception: none
+\end{itemize}
+
+\noindent load($f$):
+\begin{itemize}
+	\item transition: $\textit{g} := \textit{control}.\mbox{load}(f)$
+	\item exception: none
+\end{itemize}
+
+\noindent load($f$):
+\begin{itemize}
+	\item transition: $\textit{g} := \textit{control}.\mbox{load}(f)$
+	\item exception: none
+\end{itemize}
+
+\noindent search($n$):
+\begin{itemize}
+	\item output: $out := \mbox{new GraphSearch}(\textit{g}).\mbox{find}(n)$
+	\item exception: none
+\end{itemize}
+
+\noindent sort($i, j$):
+\begin{itemize}
+	\item output: $out := \mbox{new GraphSort}(\textit{g}).\mbox{sort}(i, j)$
+	\item exception: none
+\end{itemize}
+
+\noindent path($a, b$):
+\begin{itemize}
+	\item output: $out := \mbox{new GraphPath}(\textit{g}).\mbox{path}(a, b)$
+	\item exception: none
+\end{itemize}
+
+\noindent printout($e, f$):
+\begin{itemize}
+	\item output: Create a file called $f$ such that: \\
+	the following data of each Edge in $e$ is printed in order, start, end, number of trips, fare, tips, distance, toll.
+	\item exception: none
+\end{itemize}
+
+\noindent main():
+\begin{itemize}
+	\item output: Operate Cash Me A Taxi via command line: \\
+	the operations are listed in the following order: enter data file, save graph, load graph, search, sort, and path. Perform the option specified by the user given additional input. Output is printed to a file called "CMATOut.txt".
+	\item exception: none
+\end{itemize}
+
+\end{document}
